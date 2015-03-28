@@ -5,8 +5,40 @@ var options = { enableGestures: true };
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
+
+  // if (finger.type() === TYPE_MIDDLE) {
+  //   bluescreen();
+  // }
+
+  // fingerString += concatData("finger_type", finger.type) + " (" + getFingerName(finger.type) + ") <br>"
+  output.innerHTML = "test";
   CheckForGesture(frame);
 })
+
+function getFingerName(fingerType) {
+  switch(fingerType) {
+    case 0:
+      return 'Thumb';
+    break;
+
+    case 1:
+      return 'Index';
+    break;
+
+    case 2:
+      return 'Middle';
+    break;
+
+    case 3:
+      return 'Ring';
+    break;
+
+    case 4:
+      return 'Pinky';
+    break;
+  }
+}
+    
 
 function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
@@ -89,4 +121,31 @@ function babbliomus() {
 		font-family: Wingdings;\
 	}\
 	</style>")
+}
+
+function CrackScreen() {
+    console.log('cracking screen');
+
+}
+
+function bluescreen() {
+    console.log('bluescreen');
+
+    $('body').empty();
+
+    $('head').append("<style>\
+    body {\
+        background-color: #0000aa;\
+        color: #ffffff;\
+        font-family: courier;\
+        font-size: 12pt;\
+        margin: 100px;\
+    }\
+    </style>")
+
+    //TODO: add some sassy blue screen messages
+    $('body').prepend("<p>\
+        A problem has been detected and windows has been shut down to\
+        prevent damage to your computer's feelings.</p>\
+        ")
 }
