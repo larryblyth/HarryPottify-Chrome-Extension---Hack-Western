@@ -1,26 +1,10 @@
 var lastGesture="none";
 
-$('body').prepend('<h1>Test</h1>')
-//CrackScreen(); // for testing
-
-function concatData(id, data) {
-  return id + ": " + data + "<br>";
-}
-
-var output = document.getElementById('output');
-var frameString = "", handString = "", fingerString = "";
-var hand, finger;
-
 // Leap.loop uses browser's requestAnimationFrame
 var options = { enableGestures: true };
 
 // Main Leap Loop
-var numFingers = 0;
-var numFingersPrev = 0;
 Leap.loop(options, function(frame) {
-  //numFingers = frame.fingers.length;
-  //if(numFingers!=numFingersPrev) console.log('number of fingers: '+numFingers);
-  //numFingersPrev = numFingers;
   CheckForGesture(frame);
 })
 
@@ -71,32 +55,38 @@ function CheckForGesture(frame) {
 
 function ClockwiseCircle() {
     console.log('ClockwiseCircle detected');
-
 }
 function CounterClockwiseCircle() {
     console.log('CounterClockwiseCircle detected');
-
 }
 function KeyTap() {
     console.log('KeyTap detected');
-
 }
 function CircleScreenTap() {
     console.log('CircleScreenTap detected');
-
 }
-
 function ScreenTap() {
     console.log('ScreenTap detected');
-
+    babbliomus();
 }
-
 function Swipe() {
     console.log('Swipe detected');
-
 }
-
 function CircleSwipe() {
     console.log('CircleSwipe detected');
+}
 
+//functions
+
+function babbliomus() {
+	// TODO: RAINBOW COLOURS!
+	$('head').append("<style>\
+	@font-face {\
+		font-family: 'Wingdings';\
+		src: url('" + chrome.extension.getURL('wingdings.ttf') + "');\
+	}\
+	* { color: red !important;\
+		font-family: Wingdings;\
+	}\
+	</style>")
 }
