@@ -64,6 +64,7 @@ function KeyTap() {
 }
 function CircleScreenTap() {
     console.log('CircleScreenTap detected');
+    expectoPatronum()
 }
 function ScreenTap() {
     console.log('ScreenTap detected');
@@ -79,15 +80,13 @@ function CircleSwipe() {
 
 // Functions
 
-expectoPatronum()
-
 function expectoPatronum() {
 	var uniStep = chrome.extension.getURL('uniStep.png')
 	var uniJump = chrome.extension.getURL('uniJump.png')
 
 	$('body').append(
 		"<div id='patronus'>\
-		<img class='unicorn' id='unicorn' src='" + uniJump + "'>\
+		<img id='unicorn' src='" + uniJump + "'>\
 		</div>"
 	)
 

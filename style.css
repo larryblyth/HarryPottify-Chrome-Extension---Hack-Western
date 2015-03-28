@@ -1,4 +1,4 @@
-img.unicorn {
+img#unicorn {
 	z-index: 1000;
 	position: fixed;
 	left: 0%;
@@ -9,7 +9,7 @@ img.unicorn {
 }
 
 @-webkit-keyframes move-patronus {
-	from {left: -300px;}
+	from {left: -600px;}
 	to {left: 100%;}
 }
 
