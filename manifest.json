@@ -16,7 +16,8 @@
         }
     ],
     "web_accessible_resources": [
-        "Wingdings.ttf"
+        "Wingdings.ttf",
+        "theme_song.mp3"
     ],
     "permissions": [
         "fontSettings",
