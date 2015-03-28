@@ -3,10 +3,16 @@
     "name": "whand",
     "description": "WAND + HAND",
     "version": "1.0",
+
+    "browser_action": {
+        "default_icon": "icon.png"
+    },
+
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
-            "js": ["wand.js", "leap-0.6.3.js", "leap-plugins-0.1.10.js"]
+            "js": ["leap-0.6.3.js", "leap-plugins-0.1.10.js", "wand.js"],
+            "run_at": "document_idle"
         }
     ]
 }
