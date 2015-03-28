@@ -1,19 +1,40 @@
 var lastGesture="none";
 
+$('body').prepend("<div id='output'>hello</div>");
+
+function concatData(id, data) {
+  return id + ": " + data + "<br>";
+}
+
 // Leap.loop uses browser's requestAnimationFrame
 var options = { enableGestures: true };
+
+var output = document.getElementById('output');
+var finger;
+var fingerString = "";
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
 
   // if (finger.type() === TYPE_MIDDLE) {
-  //   bluescreen();
+  //   bluescreen();    
   // }
-
-  // fingerString += concatData("finger_type", finger.type) + " (" + getFingerName(finger.type) + ") <br>"
-  output.innerHTML = "test";
+  console.log("hello!!!")
+  isMiddleFingerPointing();
+  console.log("after isMiddleFingerPointing()")
   CheckForGesture(frame);
 })
+
+function isMiddleFingerPointing() {
+    frame = controller.frame();
+    hand = frame.hands.rightmost();
+    direction = hand.direction;
+
+    frameString += concatData("num_hands", frame.hands.length);
+    frameString += concatData("pos_middle_finger", frame.hands[0].middle)
+    frameString += concatData("hand_direction", direction);
+    output.innerHTML = frameString;
+}
 
 function getFingerName(fingerType) {
   switch(fingerType) {
