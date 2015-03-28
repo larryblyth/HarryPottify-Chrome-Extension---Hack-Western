@@ -19,8 +19,8 @@
     "web_accessible_resources": [
         "Wingdings.ttf",
         "theme_song.mp3",
-        "unicorn0.png",
-        "unicorn1.png"
+        "uniStep.png",
+        "uniJump.png"
     ],
     "permissions": [
         "fontSettings",
