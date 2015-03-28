@@ -74,9 +74,30 @@ function Swipe() {
 }
 function CircleSwipe() {
     console.log('CircleSwipe detected');
+	babbliomus()
 }
 
-//functions
+// Functions
+
+expectoPatronum()
+
+function expectoPatronum() {
+	$('body').append(
+		"<div id='patronus'>\
+		<img class='unicorn' id='unicorn'\
+		src='" + chrome.extension.getURL('unicorn0.png') + "'>\
+		<img class='unicorn' style='display:none'\
+		src='" + chrome.extension.getURL('unicorn1.png') + "'>\
+		</div>"
+	)
+	// TODO: toggle
+	setTimeout(function() {
+		console.log('click')
+		var unicorn = $('img#unicorn')
+		console.log(unicorn)
+		$('#unicorn').attr('src', chrome.extension.getURL('unicorn1.png'))
+	}, 500)
+}
 
 function babbliomus() {
 	// TODO: RAINBOW COLOURS!
