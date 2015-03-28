@@ -1,0 +1,13 @@
+{
+    "manifest_version": 2,
+    "name": "whand",
+    "description": "WAND + HAND",
+    "version": "1.0",
+    "content_scripts": [
+        {
+            "matches": ["*"],
+            "css": ["style.css"],
+            "js": ["leap-0.6.3.js", "wand.js"]
+        }
+    ],
+}
