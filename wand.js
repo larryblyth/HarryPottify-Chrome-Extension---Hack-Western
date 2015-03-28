@@ -30,8 +30,6 @@
 //     }
 // });
 
-$('body').prepend('<h1>Test</h1>')
-
 function concatData(id, data) {
   return id + ": " + data + "<br>";
 }
@@ -69,10 +67,28 @@ function CheckForGesture(frame) {
                     break;
                 case "swipe":
                     console.log("Swipe Gesture");
+                    babbliomus();
                     break;
             }
         });
     }
+}
+
+function expectoPatronum() {
+	
+}
+
+function babbliomus() {
+	// TODO: RAINBOW COLOURS!
+	$('head').append("<style>\
+	@font-face {\
+		font-family: 'Wingdings';\
+		src: url('" + chrome.extension.getURL('wingdings.ttf') + "');\
+	}\
+	* { color: red !important;\
+		font-family: Wingdings;\
+	}\
+	</style>")
 }
 
 function CrackScreen() {
