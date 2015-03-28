@@ -82,21 +82,22 @@ function CircleSwipe() {
 expectoPatronum()
 
 function expectoPatronum() {
+	var uniStep = chrome.extension.getURL('uniStep.png')
+	var uniJump = chrome.extension.getURL('uniJump.png')
+
 	$('body').append(
 		"<div id='patronus'>\
-		<img class='unicorn' id='unicorn'\
-		src='" + chrome.extension.getURL('unicorn0.png') + "'>\
-		<img class='unicorn' style='display:none'\
-		src='" + chrome.extension.getURL('unicorn1.png') + "'>\
+		<img class='unicorn' id='unicorn' src='" + uniJump + "'>\
 		</div>"
 	)
-	// TODO: toggle
-	setTimeout(function() {
-		console.log('click')
-		var unicorn = $('img#unicorn')
-		console.log(unicorn)
-		$('#unicorn').attr('src', chrome.extension.getURL('unicorn1.png'))
-	}, 500)
+
+	var jumping = true
+	setInterval(function() {
+		var unicorn = uniJump
+		if (jumping) unicorn = uniStep
+		$('#unicorn').attr('src', unicorn)
+		jumping = !jumping
+	}, 300)
 }
 
 function babbliomus() {
