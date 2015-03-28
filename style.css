@@ -1,0 +1,18 @@
+img.unicorn {
+	z-index: 1000;
+	position: fixed;
+	left: 0%;
+	bottom: 0%;
+	height: 200px;
+	width: 600px;
+	-webkit-animation: move-patronus 4s infinite;
+}
+
+@-webkit-keyframes move-patronus {
+	from {left: -300px;}
+	to {left: 100%;}
+}
+
+body {
+	color: green;
+}

@@ -1,10 +1,15 @@
 var lastGesture="none";
-var src = chrome.extension.getUrl("theme_song.mp3");
-var element = "<audio controls><source src="+src+" type='audio/mpeg'>Your browser does not support the audio element.</audio>";
-//var element = '<embed type='application/x-shockwave-flash'flashvars='audio/theme_song' src='http://www.google.com/reader/ui/3523697345-audio-player.swf' width='400' height='27' quality='best'></embed>";
+var oldImageSources = [];
+
+var src = chrome.extension.getURL('theme_song.mp3');
+
+//var element = "<audio controls><source src= '"+src+"' type='audio/mpeg'>Your browser does not support the audio element.</audio>";
+var element = "<audio id='themesongplayer' src='"+src+"' controls preload='auto' controls loop></audio>";
+console.log(element);
 $('body').append(element);
 
-HarryPottify(); // for testing
+//expectoPatronum();
+//HarryPottify(); // for testing
 
 // Leap.loop uses browser's requestAnimationFrame
 var options = { enableGestures: true };
@@ -17,6 +22,8 @@ Leap.loop(options, function(frame) {
 function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
         frame.gestures.forEach(function(gesture){
+            var audio = document.getElementById("themesongplayer");
+            if(audio.paused) audio.play();
             switch (gesture.type){
                 case "circle":
                     //console.log("gesture state: "+gesture.state);
@@ -35,7 +42,6 @@ function CheckForGesture(frame) {
                     }
                     break;
                 case "keyTap":
-                    KeyTap();
                     break;
                 case "screenTap":
                     if(lastGesture=="circle") {
@@ -61,16 +67,15 @@ function CheckForGesture(frame) {
 
 function ClockwiseCircle() {
     console.log('ClockwiseCircle detected');
-    HarryPottify();
+    //TO-DO
 }
 function CounterClockwiseCircle() {
     console.log('CounterClockwiseCircle detected');
-}
-function KeyTap() {
-    console.log('KeyTap detected');
+    HarryPottify();
 }
 function CircleScreenTap() { //will do circle action too :(
     console.log('CircleScreenTap detected');
+    expectoPatronum();
 }
 function ScreenTap() {
     console.log('ScreenTap detected');
@@ -78,12 +83,39 @@ function ScreenTap() {
 }
 function Swipe() {
     console.log('Swipe detected');
+    removeAll();
 }
 function CircleSwipe() { //will do circle action too :(
     console.log('CircleSwipe detected');
+	//TO-DO
 }
 
-//functions
+// Functions
+
+function expectoPatronum() {
+    var elem = "<div id='patronus'>\
+		<img class='unicorn' id='unicorn'\
+		src='" + chrome.extension.getURL('unicorn0.png') + "'>\
+		<img class='unicorn' style='display:none'\
+		src='" + chrome.extension.getURL('unicorn1.png') + "'>\
+		</div>";
+    console.log(elem);
+	$('body').append(
+		"<div id='patronus'>\
+		<img class='unicorn' id='unicorn'\
+		src='" + chrome.extension.getURL('unicorn0.png') + "'>\
+		<img class='unicorn' style='display:none'\
+		src='" + chrome.extension.getURL('unicorn1.png') + "'>\
+		</div>"
+	)
+	// TODO: toggle
+	setTimeout(function() {
+		console.log('click')
+		var unicorn = $('img#unicorn')
+		console.log(unicorn)
+		$('#unicorn').attr('src', chrome.extension.getURL('unicorn1.png'))
+	}, 500)
+}
 
 function babbliomus() {
 	// TODO: RAINBOW COLOURS!
@@ -111,9 +143,24 @@ function HarryPottify() {
     ];
     var i = 0;
     $("img").each(function() {
-        if(i==imageSource.length) i = 0;
-        $(this).attr("src", imageSource[i]);
-        i++;
+        if(this.id!="unicorn") {
+            if (i == imageSource.length) i = 0;
+
+            //save image source in oldImageSources
+
+            $(this).attr("src", imageSource[i]);
+            i++;
+        } else console.log("didn't set source b/c was unicorn image");
     });
-    //$("img").attr("src", "http://www.anglotopia.net/wp-content/uploads/2015/02/171c8a0a-4b73-4873-bdcd-18d7c4c50e5e.jpg");
+}
+
+function removeAll() {
+    //load all image sources back
+    //var i = 0;
+    //$("img").each(function() {
+    //    if(this.id!="unicorn") $(this).attr("src","");
+    //    //reload image source from oldImageSources
+    //    $(this).attr("src", oldImageSources[i]);
+    //    i++;
+    //});
 }
