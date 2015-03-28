@@ -85,19 +85,21 @@ function expectoPatronum() {
 	var uniJump = chrome.extension.getURL('uniJump.png')
 
 	$('body').append(
-		"<div id='patronus'>\
-		<img id='unicorn' src='" + uniJump + "'>\
-		</div>"
+		"<img id='unicorn' src='" + uniJump + "'>"
 	)
 
 	var jumping = true
 	setInterval(function() {
 		var unicorn = uniJump
 		if (jumping) unicorn = uniStep
-		$('#unicorn').attr('src', unicorn)
+		$('img#unicorn').attr('src', unicorn)
 		jumping = !jumping
 	}, 300)
 }
+
+$('img#unicorn').bind('webkitAnimationEnd', function() {
+	$(this).remove()
+})
 
 function babbliomus() {
 	// TODO: RAINBOW COLOURS!
