@@ -16,3 +16,7 @@ img#unicorn {
 body {
 	color: green;
 }
+
+#themesongplayer {
+    display: none;
+}

@@ -2,28 +2,43 @@ var lastGesture="none";
 var oldImageSources = [];
 
 var src = chrome.extension.getURL('theme_song.mp3');
-
-//var element = "<audio controls><source src= '"+src+"' type='audio/mpeg'>Your browser does not support the audio element.</audio>";
 var element = "<audio id='themesongplayer' src='"+src+"' controls preload='auto' controls loop></audio>";
-console.log(element);
 $('body').append(element);
 
-//expectoPatronum();
-//HarryPottify(); // for testing
+var src = chrome.extension.getURL('horse_song.mp3');
+var element = "<audio id='horsesongplayer' src='"+src+"' controls preload='auto' controls loop></audio>";
+$('body').append(element);
 
 // Leap.loop uses browser's requestAnimationFrame
 var options = { enableGestures: true };
+
+//testing
+HarryPottify();
+expectoPatronum();
+
+
+
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
   CheckForGesture(frame);
 })
 
+function PlayThemeMusic() {
+    console.log('playing theme music');
+    var audio = document.getElementById("themesongplayer");
+    if(audio.paused) audio.play();
+}
+
+function PauseThemeMusic() {
+    console.log('pausing theme music');
+    var audio = document.getElementById("themesongplayer");
+    if(!audio.paused) audio.pause();
+}
+
 function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
         frame.gestures.forEach(function(gesture){
-            var audio = document.getElementById("themesongplayer");
-            if(audio.paused) audio.play();
             switch (gesture.type){
                 case "circle":
                     //console.log("gesture state: "+gesture.state);
@@ -71,18 +86,22 @@ function ClockwiseCircle() {
 }
 function CounterClockwiseCircle() {
     console.log('CounterClockwiseCircle detected');
+    PlayThemeMusic();
     HarryPottify();
 }
 function CircleScreenTap() { //will do circle action too :(
     console.log('CircleScreenTap detected');
+    PlayThemeMusic();
     expectoPatronum()
 }
 function ScreenTap() {
     console.log('ScreenTap detected');
+    PlayThemeMusic();
     babbliomus();
 }
 function Swipe() {
     console.log('Swipe detected');
+    PauseThemeMusic();
     removeAll();
 }
 function CircleSwipe() { //will do circle action too :(
@@ -93,9 +112,18 @@ function CircleSwipe() { //will do circle action too :(
 // Functions
 
 function expectoPatronum() {
+    PauseThemeMusic();
+    console.log('playing horse music');
+    var horseAudio = document.getElementById("horsesongplayer");
+    if(horseAudio.paused) horseAudio.play();
+
+    $("#horsesongplayer").bind('ended', function(){
+        console.log('horseplayer finished');
+        PlayThemeMusic();
+    });
+
 	var uniStep = chrome.extension.getURL('uniStep.png')
 	var uniJump = chrome.extension.getURL('uniJump.png')
-
 	$('body').append(
 		"<div id='patronus'>\
 		<img id='unicorn' src='" + uniJump + "'>\
@@ -136,7 +164,7 @@ function HarryPottify() {
         "https://33.media.tumblr.com/833999cd2dd6ed8e92e89608ed73c771/tumblr_nlw9fvEZVV1rmbnsmo1_250.gif"
     ];
     var i = 0;
-    $("img").each(function() {
+    $("img,video").each(function() {
         if(this.id!="unicorn") {
             if (i == imageSource.length) i = 0;
 
