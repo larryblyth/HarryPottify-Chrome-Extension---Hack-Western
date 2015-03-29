@@ -22,6 +22,12 @@
         "uniStep.png",
         "uniJump.png",
         "sparkles.png"
+        "horse_song.mp3",
+        "fire_sound.mp3",
+        "magic_sound.mp3",
+        "explosion_sound.mp3",
+        "mischief.m4a",
+        "levitate.mp3"
     ],
     "permissions": [
         "fontSettings",
