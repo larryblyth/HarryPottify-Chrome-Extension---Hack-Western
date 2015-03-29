@@ -188,8 +188,6 @@ function CircleSwipe() { //will do circle action too :(
 
 // Functions
 
-setTimeout(wingardiumLeviosa, 3000)
-
 function wingardiumLeviosa() {
 	PlayMusic("levitateplayer");
 
@@ -269,7 +267,7 @@ function babbliomus() {
 		src: url('" + chrome.extension.getURL('wingdings.ttf') + "');\
 	}\
 	* { color: red !important;\
-+		font-family: Wingdings;\
+		font-family: Wingdings;\
 	}\
 	</style>")
 }
