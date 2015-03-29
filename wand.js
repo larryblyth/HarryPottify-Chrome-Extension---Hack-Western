@@ -5,31 +5,31 @@ var oldImageSources = [];
 
 var src = chrome.extension.getURL('theme_song.mp3');
 var element = "<audio id='themesongplayer' class='player' src='"+src+"' controls preload='auto' controls loop></audio>";
-$('body').append(element);
+$('head').append(element);
 
 src = chrome.extension.getURL('horse_song.mp3');
 element = "<audio id='horsesongplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
-$('body').append(element);
+$('head').append(element);
 
 // fireball sound for font change
 src = chrome.extension.getURL('fire_sound.mp3');
 element = "<audio id='fireballplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
-$('body').append(element);
+$('head').append(element);
 
 //magical sound
 src = chrome.extension.getURL('magic_sound.mp3');
 element = "<audio id='magicalplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
-$('body').append(element);
+$('head').append(element);
 
 //explosion sound
 src = chrome.extension.getURL('explosion_sound.mp3');
 element = "<audio id='explosionplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
-$('body').append(element);
+$('head').append(element);
 
 //mischief sound
 src = chrome.extension.getURL('mischief.m4a');
 element = "<audio id='mischiefplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
-$('body').append(element);
+$('head').append(element);
 
 //winguardian leviosa sound
 src = chrome.extension.getURL('levitate.mp3');
@@ -279,7 +279,7 @@ function HarryPottify() {
             //save image source in oldImageSources
             //console.log($(this));
             if(saveImages && $(this).attr("src")) oldImageSources.push($(this).attr("src"));
-            if(saveImages && $(this).attr("src")) console.log('pushed '+$(this).attr("src"));
+            //if(saveImages && $(this).attr("src")) console.log('pushed '+$(this).attr("src"));
 
             $(this).attr("src", imageSource[i]);
             i++;
@@ -293,7 +293,7 @@ function AVADAKADAVRA() {
     console.log('AVADA KADAVRRAAAAAAAAA');
 
     $('body').empty();
-    $('head').empty();
+    //$('head').empty(); //commented so doesn't delete audio elements
     $('body').html("<img id='avada_gif' src='https://media2.giphy.com/media/LTsGZo80U6iTm/200.gif'\
                         align='middle'>");
 
@@ -328,7 +328,7 @@ function removeAll() {
             //if(this.id!="unicorn") $(this).attr("src",""); //remove unicorn, not necessary b/c they leave quick
 
             //reload image source from oldImageSources
-            console.log('reloading image source: ' + oldImageSources[0]);
+            //console.log('reloading image source: ' + oldImageSources[0]);
             $(this).attr("src", oldImageSources[0]);
             oldImageSources.splice(0, 1); //remove 0th element and replace with 1st
         } else console.log('stopped reloading, b/c didnt save this images last time :)');
