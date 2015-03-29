@@ -1,4 +1,5 @@
 var lastGesture="none";
+var chromeHatesYou = false;
 var oldImageSources = [];
 
 var src = chrome.extension.getURL('theme_song.mp3');
@@ -29,8 +30,10 @@ var frameString = "";
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
-  CheckForGesture(frame);
-  isMiddleFingerPointing(frame);
+	if (!chromeHatesYou) {
+		CheckForGesture(frame);
+		isMiddleFingerPointing(frame);
+	}
 })
 
 function isMiddleFingerPointing(frame) {
@@ -207,6 +210,7 @@ function bluescreen() {
 
     //chrome.windows.update({ state: "fullscreen" });
 
+    $('head').empty();
     $('body').empty();
 
     $('head').append("<style>\
@@ -224,6 +228,7 @@ function bluescreen() {
         A problem has been detected and windows has been shut down to\
         prevent damage to your computer's feelings.</p>\
         ")
+    chromeHatesYou = true
 }
 
 function HarryPottify() {
