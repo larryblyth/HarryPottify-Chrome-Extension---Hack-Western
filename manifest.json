@@ -21,7 +21,11 @@
         "theme_song.mp3",
         "uniStep.png",
         "uniJump.png",
-        "horse_song.mp3"
+        "horse_song.mp3",
+        "fire_sound.mp3",
+        "magic_sound.mp3",
+        "explosion_sound.mp3",
+        "mischief.m4a"
     ],
     "permissions": [
         "fontSettings",

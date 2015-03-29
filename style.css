@@ -17,9 +17,6 @@ body {
 	color: green;
 }
 
-#themesongplayer {
-    display: none;
-}
-#horsesongplayer {
+.player  {
     display: none;
 }
