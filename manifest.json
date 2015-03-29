@@ -20,7 +20,8 @@
         "Wingdings.ttf",
         "theme_song.mp3",
         "uniStep.png",
-        "uniJump.png"
+        "uniJump.png",
+        "sparkles.png"
     ],
     "permissions": [
         "fontSettings",

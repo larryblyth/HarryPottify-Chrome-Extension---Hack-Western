@@ -8,6 +8,22 @@ img#unicorn {
 	-webkit-animation: move-patronus 4s;
 }
 
+img#sparkles {
+	position: fixed;
+	height: 30px;
+	bottom: 0px;
+	left: 0px;
+	/*-webkit-animation: fade-out 2s linear forwards;*/
+}
+
+img#avada_gif {
+    min-height:100%;
+    min-width:100%;
+    height:auto;
+    width:auto;
+    position:absolute;
+}
+
 @-webkit-keyframes move-patronus {
 	from {left: -600px;}
 	to {left: 100%;}

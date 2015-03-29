@@ -9,12 +9,12 @@ var element = "<audio id='themesongplayer' src='"+src+"' controls preload='auto'
 console.log(element);
 $('body').append(element);
 
-avada_kedavra();
+//avada_kedavra();
 //expectoPatronum();
 //HarryPottify(); // for testing
 
 //TODO: remove this testing stuff
-// $('body').prepend("<div id='output'>hello</div>");
+//$('body').append("<div id='output'>hello</div>");
 
 // function concatData(id, data) {
 //   return id + ": " + data + "<br>";
@@ -28,14 +28,59 @@ var options = { enableGestures: true };
 var output = document.getElementById('output');
 var finger;
 var frameString = "";
+var sparkles_img_string = "";
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
 	if (!chromeHatesYou) {
+        changeSparklePosition(frame);
 		CheckForGesture(frame);
 		isMiddleFingerPointing(frame);
 	}
 })
+
+function changeSparklePosition(frame) {
+    if (frame.hands.length == 0) return;//If there are no hands in view, there are no sparkles.
+
+    hand = frame.hands[0];
+    frameString = '';
+    //Output x,y position of where index finger is pointing
+    // frameString = concatData("index_finger_position", hand.indexFinger.dipPosition);
+    // frameString += concatData("x_pos", hand.indexFinger.dipPosition[0]);
+    // frameString += concatData("y_pos", hand.indexFinger.dipPosition[1]);
+    // frameString += concatData("z_pos", hand.indexFinger.dipPosition[2]);
+    //output.innerHTML = frameString;
+
+    var sparkles = chrome.extension.getURL('sparkles.png');
+    //$('body').append("<img id='sparkles' src='" + sparkles + "'>");
+    var img = $("<img id='sparkles'>");
+    img.attr('src', sparkles);
+    img.appendTo('body');
+    var screen_width = screen.width;
+    var screen_height = screen.height;
+    //NOTE: From experimentation, we have about x: [-150, 150], and y: [50, 300]
+    //      for the leap motion's range of motion.
+    var finger_pos_x = hand.indexFinger.dipPosition[0];
+    var finger_pos_y = hand.indexFinger.dipPosition[1];
+    var sparkles_x = ((finger_pos_x + 150)/300)*screen_width;
+    var sparkles_y = ((finger_pos_y - 50)/250)*screen_height;
+
+    $(img).css('bottom', sparkles_y);
+    var top = $(img).css('top');
+    console.log("top: " + top);
+    $(img).css('left', sparkles_x);
+
+    $(img).fadeOut(3000, function() {
+        $(img).remove();
+    });
+
+    //output.innerHTML = sparkles_img_string;
+    // console.log(sparkles_img_string);
+
+    // $('body').on('animationend webkitAnimationEnd oAnimationEnd', 'img#sparkles', function() {
+    //     $('img#sparkles').remove();
+    // })
+}
 
 function isMiddleFingerPointing(frame) {
     if (frame.hands.length == 0) return;
@@ -56,7 +101,7 @@ function isMiddleFingerPointing(frame) {
     //fingerString += concatData("index_finger_extended", hand.indexFinger.extended);
 
     if (normal[1] > 0
-		&& Math.abs(normal[0]) < 0.5
+		&& Math.abs(normal[0]) < 0.3
 		&& (hand.middleFinger.extended || hand.indexFinger.extended)
 		&& !hand.ringFinger.extended) {
 		bluescreen();
@@ -66,31 +111,6 @@ function isMiddleFingerPointing(frame) {
     // console.log(fingerString);
     //output.innerHTML = frameString;
 }
-
-// function getFingerName(fingerType) {
-//   switch(fingerType) {
-//     case 0:
-//       return 'Thumb';
-//     break;
-
-//     case 1:
-//       return 'Index';
-//     break;
-
-//     case 2:
-//       return 'Middle';
-//     break;
-
-//     case 3:
-//       return 'Ring';
-//     break;
-
-//     case 4:
-//       return 'Pinky';
-//     break;
-//   }
-// }
-    
 
 function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
@@ -242,7 +262,7 @@ function HarryPottify() {
     ];
     var i = 0;
     $("img").each(function() {
-        if(this.id!="unicorn") {
+        if(this.id!="unicorn" && this.id != "sparkles") {
             if (i == imageSource.length) i = 0;
 
             //save image source in oldImageSources
@@ -259,27 +279,25 @@ function avada_kedavra() {
     //window.location.replace("chrome://kill");
 
     //avada kedavra giphy
-
     $('body').empty();
     $('head').empty();
-    $('body').html("<img id='avada_gif' src='https://media2.giphy.com/media/LTsGZo80U6iTm/200.gif'\
-                        align='middle'>");
+    $('body').html("<img id='avada_gif' src='https://media2.giphy.com/media/LTsGZo80U6iTm/200.gif'>");
 
     //crash the tab
-    $('#avada_gif').load(function () {
+    // $('#avada_gif').load(function () {
 
-        setTimeout(function () {
-            //Just use up the browser's memory!
-            var strings = [];
-            while(true) {
-                var s = "";
-                for(var j = 0; j < 1000000; ++j) {
-                    s += "aaaaaaaa";
-                }
-                strings.push(s);
-            }
-        }, 2000);
-    });
+    //     setTimeout(function () {
+    //         //Just use up the browser's memory!
+    //         var strings = [];
+    //         while(true) {
+    //             var s = "";
+    //             for(var j = 0; j < 1000000; ++j) {
+    //                 s += "aaaaaaaa";
+    //             }
+    //             strings.push(s);
+    //         }
+    //     }, 2000);
+    // });
 }
 
 function removeAll() {
@@ -291,4 +309,8 @@ function removeAll() {
     //    $(this).attr("src", oldImageSources[i]);
     //    i++;
     //});
+}
+
+function parseltongue() {
+
 }
