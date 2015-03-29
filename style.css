@@ -29,10 +29,6 @@ img#avada_gif {
 	to {left: 100%;}
 }
 
-body {
-	color: green;
-}
-
 .player  {
     display: none;
 }
