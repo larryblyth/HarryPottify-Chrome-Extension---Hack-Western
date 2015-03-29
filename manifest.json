@@ -11,13 +11,17 @@
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*"],
+            "css": ["style.css"],
             "js": ["jquery-2.1.3.min.js", "leap-0.6.3.js", "leap-plugins-0.1.10.js", "wand.js"],
             "run_at": "document_idle",
             "all_frames": true
         }
     ],
     "web_accessible_resources": [
-        "Wingdings.ttf"
+        "Wingdings.ttf",
+        "theme_song.mp3",
+        "uniStep.png",
+        "uniJump.png"
     ],
     "permissions": [
         "fontSettings",

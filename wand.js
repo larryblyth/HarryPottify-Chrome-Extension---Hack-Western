@@ -1,69 +1,98 @@
 var lastGesture="none";
+var oldImageSources = [];
 
-$('body').prepend("<div id='output'>hello</div>");
+var src = chrome.extension.getURL('theme_song.mp3');
 
-function concatData(id, data) {
-  return id + ": " + data + "<br>";
-}
+//var element = "<audio controls><source src= '"+src+"' type='audio/mpeg'>Your browser does not support the audio element.</audio>";
+var element = "<audio id='themesongplayer' src='"+src+"' controls preload='auto' controls loop></audio>";
+console.log(element);
+$('body').append(element);
+
+//expectoPatronum();
+//HarryPottify(); // for testing
+
+//TODO: remove this testing stuff
+// $('body').prepend("<div id='output'>hello</div>");
+
+// function concatData(id, data) {
+//   return id + ": " + data + "<br>";
+// }
+
+//ENDTEST
 
 // Leap.loop uses browser's requestAnimationFrame
 var options = { enableGestures: true };
 
 var output = document.getElementById('output');
 var finger;
-var fingerString = "";
+var frameString = "";
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
-
-  // if (finger.type() === TYPE_MIDDLE) {
-  //   bluescreen();    
-  // }
-  console.log("hello!!!")
-  isMiddleFingerPointing();
-  console.log("after isMiddleFingerPointing()")
   CheckForGesture(frame);
+  isMiddleFingerPointing(frame);
 })
 
-function isMiddleFingerPointing() {
-    frame = controller.frame();
-    hand = frame.hands.rightmost();
-    direction = hand.direction;
+function isMiddleFingerPointing(frame) {
+    if (frame.hands.length == 0) return;
 
-    frameString += concatData("num_hands", frame.hands.length);
-    frameString += concatData("pos_middle_finger", frame.hands[0].middle)
-    frameString += concatData("hand_direction", direction);
-    output.innerHTML = frameString;
+    hand = frame.hands[0];
+    //direction = hand.direction;
+
+    //fingerString = "";
+    // for (var j = 0, len2 = hand.fingers.length; j < len2; j++) {
+    //     finger = hand.fingers[j];
+    //     fingerString += concatData("finger_type", finger.type) + " (" + getFingerName(finger.type) + ") <br>";
+    //     fingerString += concatData("finger_extended", finger.extended) + "<br>";
+    //     fingerString += "<br>";
+    // }
+
+    //fingerString += concatData("middle_finger_extended", hand.middleFinger.extended);
+    //fingerString += concatData("index_finger_extended", hand.indexFinger.extended);
+
+    if (hand.middleFinger.extended 
+        && (!hand.indexFinger.extended)
+        && (!hand.thumb.extended)
+        && (!hand.pinky.extended)
+        && (!hand.ringFinger.extended)) {
+        bluescreen();
+    }
+
+    //output.innerHTML = fingerString;
+    //console.log(fingerString);
+    //output.innerHTML = frameString;
 }
 
-function getFingerName(fingerType) {
-  switch(fingerType) {
-    case 0:
-      return 'Thumb';
-    break;
+// function getFingerName(fingerType) {
+//   switch(fingerType) {
+//     case 0:
+//       return 'Thumb';
+//     break;
 
-    case 1:
-      return 'Index';
-    break;
+//     case 1:
+//       return 'Index';
+//     break;
 
-    case 2:
-      return 'Middle';
-    break;
+//     case 2:
+//       return 'Middle';
+//     break;
 
-    case 3:
-      return 'Ring';
-    break;
+//     case 3:
+//       return 'Ring';
+//     break;
 
-    case 4:
-      return 'Pinky';
-    break;
-  }
-}
+//     case 4:
+//       return 'Pinky';
+//     break;
+//   }
+// }
     
 
 function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
         frame.gestures.forEach(function(gesture){
+            var audio = document.getElementById("themesongplayer");
+            if(audio.paused) audio.play();
             switch (gesture.type){
                 case "circle":
                     //console.log("gesture state: "+gesture.state);
@@ -82,7 +111,6 @@ function CheckForGesture(frame) {
                     }
                     break;
                 case "keyTap":
-                    KeyTap();
                     break;
                 case "screenTap":
                     if(lastGesture=="circle") {
@@ -108,15 +136,15 @@ function CheckForGesture(frame) {
 
 function ClockwiseCircle() {
     console.log('ClockwiseCircle detected');
+    //TO-DO
 }
 function CounterClockwiseCircle() {
     console.log('CounterClockwiseCircle detected');
+    HarryPottify();
 }
-function KeyTap() {
-    console.log('KeyTap detected');
-}
-function CircleScreenTap() {
+function CircleScreenTap() { //will do circle action too :(
     console.log('CircleScreenTap detected');
+    expectoPatronum()
 }
 function ScreenTap() {
     console.log('ScreenTap detected');
@@ -124,12 +152,35 @@ function ScreenTap() {
 }
 function Swipe() {
     console.log('Swipe detected');
+    removeAll();
 }
-function CircleSwipe() {
+function CircleSwipe() { //will do circle action too :(
     console.log('CircleSwipe detected');
+	//TO-DO
 }
 
-//functions
+// Functions
+
+function expectoPatronum() {
+	var uniStep = chrome.extension.getURL('uniStep.png')
+	var uniJump = chrome.extension.getURL('uniJump.png')
+
+	$('body').append(
+		"<img id='unicorn' src='" + uniJump + "'>"
+	)
+
+	var jumping = true
+	setInterval(function() {
+		var unicorn = uniJump
+		if (jumping) unicorn = uniStep
+		$('img#unicorn').attr('src', unicorn)
+		jumping = !jumping
+	}, 300)
+}
+
+$('img#unicorn').bind('webkitAnimationEnd', function() {
+	$(this).remove()
+})
 
 function babbliomus() {
 	// TODO: RAINBOW COLOURS!
@@ -146,11 +197,12 @@ function babbliomus() {
 
 function CrackScreen() {
     console.log('cracking screen');
-
 }
 
 function bluescreen() {
     console.log('bluescreen');
+
+    //chrome.windows.update({ state: "fullscreen" });
 
     $('body').empty();
 
@@ -169,4 +221,39 @@ function bluescreen() {
         A problem has been detected and windows has been shut down to\
         prevent damage to your computer's feelings.</p>\
         ")
+}
+
+function HarryPottify() {
+    //replace all images with harry potter images
+    console.log('HarryPottify!');
+    var imageSource = [
+        "https://38.media.tumblr.com/36318e459e66739f1a481e03585f40aa/tumblr_nlw0laEc591si2ypro1_500.gif",
+        "https://38.media.tumblr.com/f9940450a1e0d5db482f020361a21803/tumblr_nlw0laEc591si2ypro2_500.gif",
+        "https://40.media.tumblr.com/7d3f2d2e34fea6a7d591719c9adf19d5/tumblr_nlxtp5ZdbV1qzcmp3o1_500.jpg",
+        "https://33.media.tumblr.com/8ee2c2879a78309915ad32ae858082b1/tumblr_nlw3dhgmTy1u9p9x4o2_500.gif",
+        "https://38.media.tumblr.com/3b22871c3236db0f0492b9aa582abaf5/tumblr_nlw4cjWrQx1r7mqm8o4_250.gif",
+        "https://33.media.tumblr.com/833999cd2dd6ed8e92e89608ed73c771/tumblr_nlw9fvEZVV1rmbnsmo1_250.gif"
+    ];
+    var i = 0;
+    $("img").each(function() {
+        if(this.id!="unicorn") {
+            if (i == imageSource.length) i = 0;
+
+            //save image source in oldImageSources
+
+            $(this).attr("src", imageSource[i]);
+            i++;
+        } else console.log("didn't set source b/c was unicorn image");
+    });
+}
+
+function removeAll() {
+    //load all image sources back
+    //var i = 0;
+    //$("img").each(function() {
+    //    if(this.id!="unicorn") $(this).attr("src","");
+    //    //reload image source from oldImageSources
+    //    $(this).attr("src", oldImageSources[i]);
+    //    i++;
+    //});
 }
