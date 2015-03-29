@@ -108,6 +108,8 @@ function changeSparklePosition(frame) {
     var sparkles_x = ((finger_pos_x + 150)/300)*screen_width;
     var sparkles_y = ((finger_pos_y - 50)/250)*screen_height;
 
+    $('img#levitating').css('left', sparkles_x)
+
     $(img).css('bottom', sparkles_y);
     var top = $(img).css('top');
     // console.log("top: " + top);
@@ -136,8 +138,12 @@ function isMiddleFingerPointing(frame) {
     hand = frame.hands[0];
     var normal = hand.palmNormal;
 
+    var velocities = hand.palmVelocity;
+    var speed = Math.abs(velocities[0])
+
     if (normal[1] > 0
 		&& Math.abs(normal[0]) < 0.3
+        && speed < 50
 		&& (hand.middleFinger.extended || hand.indexFinger.extended)
 		&& !hand.ringFinger.extended) {
 		bluescreen();
@@ -184,13 +190,22 @@ function CheckForGesture(frame) {
                     if(gesture.state=="stop") {
                         // If swipe is mostly horizontal and the swipe is towards the right
                         var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1])
-                        if (isHorizontal && (gesture.direction[0] > 0)) {
-                            Swipe();
+                        if (isHorizontal) {
+                            if (gesture.direction[0] > 0) {
+                                Swipe();
 
-                            secondLastGesture = lastGesture;
-                            lastGesture="swipe";
-                        } else {
-                            console.log('not horizontal enough')
+                                secondLastGesture = lastGesture;
+                                lastGesture="swipeRight";
+                            } else {
+                                // Swipe left
+                                if (lastGesture == 'swipeRight') {
+                                    console.log('swiped right then left')
+                                    AVADAKADAVRA()
+                                } else {
+                                    console.log('swiped left only')
+                                }
+                                console.log('not horizontal enough')
+                            }
                         }
                     }
                     break;
@@ -281,8 +296,10 @@ function wingardiumLeviosa() {
 
 
 		if (maxArea < imageArea && onscreen) {
-			originalImage = images[i]
-			maxArea = imageArea
+            if ($(images[i]).attr('id') != 'unicorn') {
+                originalImage = images[i]
+                maxArea = imageArea
+            }
 		}
 		// console.log('image')
 	}
@@ -308,7 +325,7 @@ function wingardiumLeviosa() {
 	$(originalImage).css("display", "none")
 	$(cloneImage).animate({'top': '0%'}, 'slow')
 
-	$(originalImage).attr('id', 'levitating')
+	$(cloneImage).attr('id', 'levitating')
 }
 
 function expectoPatronum() {
@@ -410,7 +427,7 @@ function AVADAKADAVRA() {
     $('body').empty();
     //$('head').empty();
     $('body').html("<img id='avada_gif' src='https://media2.giphy.com/media/LTsGZo80U6iTm/200.gif'>");
-
+    chromeHatesYou = true
     //crash the tab
     // $('#avada_gif').load(function () {
 
