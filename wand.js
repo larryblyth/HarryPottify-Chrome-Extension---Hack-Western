@@ -92,7 +92,7 @@ function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
         frame.gestures.forEach(function(gesture){
             var audio = document.getElementById("themesongplayer");
-            if(audio.paused) audio.play();
+            if(audio && audio.paused) audio.play();
             switch (gesture.type){
                 case "circle":
                     //console.log("gesture state: "+gesture.state);
@@ -178,8 +178,8 @@ function expectoPatronum() {
 	}, 300)
 }
 
-$('img#unicorn').bind('webkitAnimationEnd', function() {
-	$(this).remove()
+$('body').on('animationend webkitAnimationEnd oAnimationEnd', 'img#unicorn', function() {
+	$('img#unicorn').remove()
 })
 
 function babbliomus() {
