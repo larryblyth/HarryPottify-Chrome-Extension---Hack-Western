@@ -70,11 +70,12 @@ var sparkleCounter = 0;
 Leap.loop(options, function(frame) {
 	if (!chromeHatesYou) {
 
-        if(sparkleCounter > 7) {
-            changeSparklePosition(frame);
-            sparkleCounter = 0;
-        }
-        sparkleCounter++
+        // if(sparkleCounter > 7) {
+        //     changeSparklePosition(frame);
+        //     sparkleCounter = 0;
+        // }
+        // sparkleCounter++
+        //changeSparklePosition(frame);
 		CheckForGesture(frame);
         if(middleFingerCounter>8) {
             isMiddleFingerPointing(frame);
@@ -174,6 +175,7 @@ function CheckForGesture(frame) {
                         	var dotProduct = Leap.vec3.dot(direction, gesture.normal);
                         	if (dotProduct > 0) clockwise = true;
 	                        if (clockwise) {
+                                if(frame.hands.length == 2) ClockwiseCircleTwoHands();
 	                            if(lastGesture=="clockwisecircle") TwoClockWiseCircles();
 	                            else ClockwiseCircle();
 	                            secondLastGesture = lastGesture;
@@ -192,11 +194,11 @@ function CheckForGesture(frame) {
                     if(secondLastGesture=="clockwisecircle" && lastGesture=="counterclockwisecircle") {
                         ClockwiseCounterClockWiseTap();
                     } else if(lastGesture=="clockwisecircle") { //second last gesture wasn't counterclockwise circle
-                        ClockwiseCircleScreenTap();
+                        //ClockwiseCircleScreenTap();
                     } else ScreenTap();
                     break;
                 case "swipe":
-                    if(gesture.state=="stop") {
+                    //if(gesture.state=="stop") {
                         // If swipe is mostly horizontal and the swipe is towards the right
                         var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1])
                         if (isHorizontal && (gesture.direction[0] > 0)) {
@@ -207,7 +209,7 @@ function CheckForGesture(frame) {
                         } else {
                             console.log('not horizontal enough')
                         }
-                    }
+                    //}
                     break;
             }
             if(gesture.type!="circle" && gesture.type!="swipe") {
@@ -241,7 +243,7 @@ function CounterClockwiseCircle() {
         PlayMusic("themesongplayer");
     } else console.log('not harry pottifying b/c last gesture was clockwise circle, waiting for avada kadavra');
 }
-function ClockwiseCircleScreenTap() { //will do circle action too :(
+function ClockwiseCircleTwoHands() { //will do circle action too :(
     console.log('ClockwiseCircleScreenTap detected');
     expectoPatronum();
     PlayMusic("horsesongplayer");
