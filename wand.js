@@ -290,7 +290,7 @@ function HarryPottify() {
 function AVADAKADAVRA() {
     //TODO: try to get the "He's dead, Jim!"
 
-    console.log('AVADA KADAVRRAAAAAAAAA'); return;
+    console.log('AVADA KADAVRRAAAAAAAAA');
 
     $('body').empty();
     $('head').empty();
@@ -300,17 +300,17 @@ function AVADAKADAVRA() {
     //crash the tab
     $('#avada_gif').load(function () {
 
-        setTimeout(function () {
-            //Just use up the browser's memory!
-            var strings = [];
-            while(true) {
-                var s = "";
-                for(var j = 0; j < 1000000; ++j) {
-                    s += "aaaaaaaa";
-                }
-                strings.push(s);
-            }
-        }, 2000);
+        //setTimeout(function () {
+        //    //Just use up the browser's memory!
+        //    var strings = [];
+        //    while(true) {
+        //        var s = "";
+        //        for(var j = 0; j < 1000000; ++j) {
+        //            s += "aaaaaaaa";
+        //        }
+        //        strings.push(s);
+        //    }
+        //}, 2000);
     });
 }
 
