@@ -54,14 +54,11 @@ function isMiddleFingerPointing(frame) {
     //fingerString += concatData("middle_finger_extended", hand.middleFinger.extended);
     //fingerString += concatData("index_finger_extended", hand.indexFinger.extended);
 
-
-    if (hand.middleFinger.extended 
-        && (!hand.indexFinger.extended)
-        && (!hand.thumb.extended)
-        && (!hand.pinky.extended)
-        && (!hand.ringFinger.extended)
-        && normal[1] > 0) {
-        bluescreen();
+    if (normal[1] > 0
+		&& Math.abs(normal[0]) < 0.5
+		&& (hand.middleFinger.extended || hand.indexFinger.extended)
+		&& !hand.ringFinger.extended) {
+		bluescreen();
     }
 
     // output.innerHTML = fingerString;
