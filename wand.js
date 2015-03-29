@@ -36,6 +36,17 @@ src = chrome.extension.getURL('levitate.mp3');
 element = "<audio id='levitateplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
 $('body').append(element);
 
+//avada_kedavra();
+//expectoPatronum();
+//HarryPottify(); // for testing
+
+//TODO: remove this testing stuff
+//$('body').append("<div id='output'>hello</div>");
+
+// function concatData(id, data) {
+//   return id + ": " + data + "<br>";
+// }
+
 //testing
 //babbliomus();
 //expectoPatronum();
@@ -48,11 +59,13 @@ var options = { enableGestures: true };
 var output = document.getElementById('output');
 var finger;
 var frameString = "";
+var sparkles_img_string = "";
 
 // Main Leap Loop
 var middleFingerCounter = 0;
 Leap.loop(options, function(frame) {
 	if (!chromeHatesYou) {
+        changeSparklePosition(frame);
 		CheckForGesture(frame);
         if(middleFingerCounter>8) {
             isMiddleFingerPointing(frame);
@@ -61,6 +74,41 @@ Leap.loop(options, function(frame) {
         middleFingerCounter++;
 	}
 })
+
+function changeSparklePosition(frame) {
+    if (frame.hands.length == 0) return;//If there are no hands in view, there are no sparkles.
+
+    hand = frame.hands[0];
+    frameString = '';
+    //Output x,y position of where index finger is pointing
+    // frameString = concatData("index_finger_position", hand.indexFinger.dipPosition);
+    // frameString += concatData("x_pos", hand.indexFinger.dipPosition[0]);
+    // frameString += concatData("y_pos", hand.indexFinger.dipPosition[1]);
+    // frameString += concatData("z_pos", hand.indexFinger.dipPosition[2]);
+
+    var sparkles = chrome.extension.getURL('sparkles.png');
+    //$('body').append("<img id='sparkles' src='" + sparkles + "'>");
+    var img = $("<img id='sparkles'>");
+    img.attr('src', sparkles);
+    img.appendTo('body');
+    var screen_width = screen.width;
+    var screen_height = screen.height;
+    //NOTE: From experimentation, we have about x: [-150, 150], and y: [50, 300]
+    //      for the leap motion's range of motion.
+    var finger_pos_x = hand.indexFinger.dipPosition[0];
+    var finger_pos_y = hand.indexFinger.dipPosition[1];
+    var sparkles_x = ((finger_pos_x + 150)/300)*screen_width;
+    var sparkles_y = ((finger_pos_y - 50)/250)*screen_height;
+
+    $(img).css('bottom', sparkles_y);
+    var top = $(img).css('top');
+    console.log("top: " + top);
+    $(img).css('left', sparkles_x);
+
+    $(img).fadeOut(3000, function() {
+        $(img).remove();
+    });
+}
 
 function PlayMusic(player) {
     console.log('playing music for '+player);
@@ -81,7 +129,7 @@ function isMiddleFingerPointing(frame) {
     var normal = hand.palmNormal;
 
     if (normal[1] > 0
-		&& Math.abs(normal[0]) < 0.5
+		&& Math.abs(normal[0]) < 0.3
 		&& (hand.middleFinger.extended || hand.indexFinger.extended)
 		&& !hand.ringFinger.extended) {
 		bluescreen();
@@ -315,8 +363,9 @@ function HarryPottify() {
         "https://33.media.tumblr.com/833999cd2dd6ed8e92e89608ed73c771/tumblr_nlw9fvEZVV1rmbnsmo1_250.gif"
     ];
     var i = 0;
+
     $("img,video").each(function() {
-        if(this.id!="unicorn") {
+        if(this.id!="unicorn" && this.id != "sparkles") {
             if (i == imageSource.length) i = 0;
 
             //save image source in oldImageSources
@@ -332,29 +381,27 @@ function HarryPottify() {
 
 function AVADAKADAVRA() {
     //TODO: try to get the "He's dead, Jim!"
-
+    //avada kedavra giphy
     console.log('AVADA KADAVRRAAAAAAAAA');
-
     $('body').empty();
-    //$('head').empty(); //commented so doesn't delete audio elements
-    $('body').html("<img id='avada_gif' src='https://media2.giphy.com/media/LTsGZo80U6iTm/200.gif'\
-                        align='middle'>");
+    //$('head').empty();
+    $('body').html("<img id='avada_gif' src='https://media2.giphy.com/media/LTsGZo80U6iTm/200.gif'>");
 
     //crash the tab
-    $('#avada_gif').load(function () {
+    // $('#avada_gif').load(function () {
 
-        //setTimeout(function () {
-        //    //Just use up the browser's memory!
-        //    var strings = [];
-        //    while(true) {
-        //        var s = "";
-        //        for(var j = 0; j < 1000000; ++j) {
-        //            s += "aaaaaaaa";
-        //        }
-        //        strings.push(s);
-        //    }
-        //}, 2000);
-    });
+    //     setTimeout(function () {
+    //         //Just use up the browser's memory!
+    //         var strings = [];
+    //         while(true) {
+    //             var s = "";
+    //             for(var j = 0; j < 1000000; ++j) {
+    //                 s += "aaaaaaaa";
+    //             }
+    //             strings.push(s);
+    //         }
+    //     }, 2000);
+    // });
 }
 
 function removeAll() {
@@ -376,4 +423,8 @@ function removeAll() {
             oldImageSources.splice(0, 1); //remove 0th element and replace with 1st
         } else console.log('stopped reloading, b/c didnt save this images last time :)');
     });
+}
+
+function parseltongue() {
+    //TODO
 }
