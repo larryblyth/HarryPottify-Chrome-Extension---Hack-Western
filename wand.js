@@ -164,6 +164,57 @@ function CircleSwipe() { //will do circle action too :(
 
 // Functions
 
+setTimeout(wingardiumLeviosa, 3000)
+
+function wingardiumLeviosa() {
+	var images = $('img:visible')
+
+	var maxArea = 0
+	var maxImage = images[0]
+	for (var i = 0; i < images.length; i++) {
+		var imageArea = Math.pow(images[i].naturalWidth, 2) + Math.pow(images[i].naturalHeight, 2)
+		// console.log(images[i])
+		// console.log('image area: ' + imageArea)
+
+		var onscreen = (
+			(maxImage.offsetLeft + maxImage.offsetWidth) >= 0
+			&& (maxImage.offsetTop + maxImage.offsetHeight) >= 0
+			&& (maxImage.offsetLeft <= window.innerWidth)
+			&& (maxImage.offsetTop <= window.innerHeight)
+		)
+
+
+		if (maxArea < imageArea && onscreen) {
+			maxImage = images[i]
+			maxArea = imageArea
+		}
+		// console.log('image')
+	}
+
+	// maxImage = images[0]
+	$(maxImage).removeAttr('class')
+	var left = $(maxImage).offset().left
+	var top = $(maxImage).offset().top
+	var width = maxImage.width
+	var height = maxImage.height
+
+	var cloneImage = $(maxImage).clone()
+	$(cloneImage).css({
+		"position" : "fixed",
+		"width": width,
+		"height": height,
+		"top": top,
+		"left": left,
+		"z-index": 999
+	})
+	$('body').append(cloneImage)
+
+	$(maxImage).css("display", "none")
+	$(cloneImage).animate({'top': '0%'}, 'slow')
+
+	$(maxImage).attr('id', 'levitating')
+}
+// expectoPatronum()
 function expectoPatronum() {
 	var uniStep = chrome.extension.getURL('uniStep.png')
 	var uniJump = chrome.extension.getURL('uniJump.png')
