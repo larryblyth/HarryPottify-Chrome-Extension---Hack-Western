@@ -5,7 +5,7 @@ img#unicorn {
 	bottom: 0%;
 	height: 200px;
 	width: 600px;
-	-webkit-animation: move-patronus 4s infinite;
+	-webkit-animation: move-patronus 4s;
 }
 
 @-webkit-keyframes move-patronus {
@@ -18,5 +18,8 @@ body {
 }
 
 #themesongplayer {
+    display: none;
+}
+#horsesongplayer {
     display: none;
 }

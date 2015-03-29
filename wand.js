@@ -1,27 +1,32 @@
 var lastGesture="none";
+var secondLastGesture = "none";
 var oldImageSources = [];
 
 var src = chrome.extension.getURL('theme_song.mp3');
 var element = "<audio id='themesongplayer' src='"+src+"' controls preload='auto' controls loop></audio>";
 $('body').append(element);
 
-var src = chrome.extension.getURL('horse_song.mp3');
-var element = "<audio id='horsesongplayer' src='"+src+"' controls preload='auto' controls loop></audio>";
+src = chrome.extension.getURL('horse_song.mp3');
+element = "<audio id='horsesongplayer' src='"+src+"' controls preload='auto' controls></audio>";
 $('body').append(element);
 
-// Leap.loop uses browser's requestAnimationFrame
-var options = { enableGestures: true };
-
 //testing
-HarryPottify();
-expectoPatronum();
+//babbliomus();
+//expectoPatronum();
+//HarryPottify();
+//alert('check it out');
+//removeAll();
 
 
-
+var options = { enableGestures: true };
+var output = document.getElementById('output');
+var finger;
+var frameString = "";
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
   CheckForGesture(frame);
+  isMiddleFingerPointing(frame);
 })
 
 function PlayThemeMusic() {
@@ -36,14 +41,31 @@ function PauseThemeMusic() {
     if(!audio.paused) audio.pause();
 }
 
+function isMiddleFingerPointing(frame) {
+    if (frame.hands.length == 0) return;
+
+    hand = frame.hands[0];
+    var normal = hand.palmNormal;
+
+    if (hand.middleFinger.extended 
+        && (!hand.indexFinger.extended)
+        && (!hand.thumb.extended)
+        && (!hand.pinky.extended)
+        && (!hand.ringFinger.extended)
+        && normal[1] > 0) {
+        bluescreen();
+    }
+}
+
 function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
         frame.gestures.forEach(function(gesture){
+            var audio = document.getElementById("themesongplayer");
+            if(audio && audio.paused) audio.play();
             switch (gesture.type){
                 case "circle":
                     //console.log("gesture state: "+gesture.state);
                     if(gesture.state=="stop") {
-                        lastGesture="circle";
                         var clockwise = false;
                         var pointableID = gesture.pointableIds[0];
                         var direction = frame.pointable(pointableID).direction;
@@ -51,31 +73,39 @@ function CheckForGesture(frame) {
                         if (dotProduct > 0) clockwise = true;
                         if (clockwise) {
                             ClockwiseCircle();
+                            secondLastGesture = lastGesture;
+                            lastGesture="clockwisecircle";
                         } else {
                             CounterClockwiseCircle();
+                            secondLastGesture = lastGesture;
+                            lastGesture="counterclockwisecircle";
                         }
                     }
                     break;
                 case "keyTap":
                     break;
                 case "screenTap":
-                    if(lastGesture=="circle") {
-                        CircleScreenTap();
-                    }
-                    else ScreenTap();
+                    console.log('in screentap. second last gesture was: '+secondLastGesture + ', last gesture was: '+lastGesture);
+
+                    if(secondLastGesture=="clockwisecircle" && lastGesture=="counterclockwisecircle") {
+                        ClockwiseCounterClockWiseTap();
+                    } else if(lastGesture=="clockwisecircle") { //second last gesture wasn't counterclockwise circle
+                        ClockwiseCircleScreenTap();
+                    } else ScreenTap();
                     break;
                 case "swipe":
                     if(gesture.state=="stop") {
-                        if(lastGesture=="circle") {
-                            CircleScreenTap();
-                        } else {
-                            Swipe();
-                        }
+                        Swipe();
+
+                        secondLastGesture = lastGesture;
                         lastGesture="swipe";
                     }
                     break;
             }
-            if(gesture.type!="circle" && gesture.type!="swipe") lastGesture=gesture.type; //only set last gesture to circle at stop event
+            if(gesture.type!="circle" && gesture.type!="swipe") {
+                secondLastGesture = lastGesture;
+                lastGesture=gesture.type;
+            } //only set last gesture to circle at stop event
         });
     }
 }
@@ -84,13 +114,21 @@ function ClockwiseCircle() {
     console.log('ClockwiseCircle detected');
     //TO-DO
 }
+
+function ClockwiseCounterClockWiseTap() {
+    console.log('ClockwiseCounterClockWiseTap detected');
+    AVADAKADAVRA();
+    //TO-DO
+}
 function CounterClockwiseCircle() {
     console.log('CounterClockwiseCircle detected');
-    PlayThemeMusic();
-    HarryPottify();
+    if(lastGesture!="clockwisecircle") {
+        PlayThemeMusic();
+        HarryPottify();
+    } else console.log('not harry pottifying b/c last gesture was clockwise circle, waiting for avada kadavra');
 }
-function CircleScreenTap() { //will do circle action too :(
-    console.log('CircleScreenTap detected');
+function ClockwiseCircleScreenTap() { //will do circle action too :(
+    console.log('ClockwiseCircleScreenTap detected');
     PlayThemeMusic();
     expectoPatronum()
 }
@@ -125,36 +163,69 @@ function expectoPatronum() {
 	var uniStep = chrome.extension.getURL('uniStep.png')
 	var uniJump = chrome.extension.getURL('uniJump.png')
 	$('body').append(
-		"<div id='patronus'>\
-		<img id='unicorn' src='" + uniJump + "'>\
-		</div>"
+		"<img id='unicorn' src='" + uniJump + "'>"
 	)
 
 	var jumping = true
 	setInterval(function() {
 		var unicorn = uniJump
 		if (jumping) unicorn = uniStep
-		$('#unicorn').attr('src', unicorn)
+		$('img#unicorn').attr('src', unicorn)
 		jumping = !jumping
 	}, 300)
 }
 
+$('body').on('animationend webkitAnimationEnd oAnimationEnd', 'img#unicorn', function() {
+	$('img#unicorn').remove()
+})
+
 function babbliomus() {
 	// TODO: RAINBOW COLOURS!
-	$('head').append("<style>\
+	$('head').append("<style id=style-id>\
 	@font-face {\
 		font-family: 'Wingdings';\
 		src: url('" + chrome.extension.getURL('wingdings.ttf') + "');\
 	}\
-	* { color: red !important;\
+	* { color: #4C0000;\
 		font-family: Wingdings;\
 	}\
 	</style>")
 }
 
+function CrackScreen() {
+    console.log('cracking screen');
+}
+
+function bluescreen() {
+    console.log('bluescreen');
+
+    //chrome.windows.update({ state: "fullscreen" });
+
+    $('body').empty();
+
+    $('head').append("<style>\
+    body {\
+        background-color: #0000aa;\
+        color: #ffffff;\
+        font-family: courier;\
+        font-size: 12pt;\
+        margin: 100px;\
+    }\
+    </style>")
+
+    //TODO: add some sassy blue screen messages
+    $('body').prepend("<p>\
+        A problem has been detected and windows has been shut down to\
+        prevent damage to your computer's feelings.</p>\
+        ")
+}
+
 function HarryPottify() {
     //replace all images with harry potter images
     console.log('HarryPottify!');
+    var saveImages = false;
+    if(oldImageSources.length == 0) saveImages = true;
+    console.log('save images? --> ' + saveImages);
     var imageSource = [
         "https://38.media.tumblr.com/36318e459e66739f1a481e03585f40aa/tumblr_nlw0laEc591si2ypro1_500.gif",
         "https://38.media.tumblr.com/f9940450a1e0d5db482f020361a21803/tumblr_nlw0laEc591si2ypro2_500.gif",
@@ -169,6 +240,9 @@ function HarryPottify() {
             if (i == imageSource.length) i = 0;
 
             //save image source in oldImageSources
+            //console.log($(this));
+            if(saveImages && $(this).attr("src")) oldImageSources.push($(this).attr("src"));
+            if(saveImages && $(this).attr("src")) console.log('pushed '+$(this).attr("src"));
 
             $(this).attr("src", imageSource[i]);
             i++;
@@ -177,12 +251,22 @@ function HarryPottify() {
 }
 
 function removeAll() {
+    console.log('removing font styling');
+    var styles = document.getElementById('style-id');
+    if(styles) styles.parentNode.removeChild(styles); // remove these styles
+    else console.log('style didnt exist');
+
+    PauseThemeMusic();
+
     //load all image sources back
-    //var i = 0;
-    //$("img").each(function() {
-    //    if(this.id!="unicorn") $(this).attr("src","");
-    //    //reload image source from oldImageSources
-    //    $(this).attr("src", oldImageSources[i]);
-    //    i++;
-    //});
+    $("img").each(function() {
+        if(oldImageSources.length>0) {
+            //if(this.id!="unicorn") $(this).attr("src",""); //remove unicorn, not necessary b/c they leave quick
+
+            //reload image source from oldImageSources
+            console.log('reloading image source: ' + oldImageSources[0]);
+            $(this).attr("src", oldImageSources[0]);
+            oldImageSources.splice(0, 1); //remove 0th element and replace with 1st
+        } else console.log('stopped reloading, b/c didnt save this images last time :)');
+    });
 }

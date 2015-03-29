@@ -10,7 +10,7 @@
 
     "content_scripts": [
         {
-            "matches": ["<all_urls>"],
+            "matches": ["http://*/*", "https://*/*"],
             "css": ["style.css"],
             "js": ["jquery-2.1.3.min.js", "leap-0.6.3.js", "leap-plugins-0.1.10.js", "wand.js"],
             "run_at": "document_idle"
@@ -25,7 +25,6 @@
     ],
     "permissions": [
         "fontSettings",
-        "http://*/",
-        "https://*/"
+        "tabs"
     ]
 }
