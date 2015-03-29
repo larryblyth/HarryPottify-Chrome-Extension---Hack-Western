@@ -37,6 +37,7 @@ function isMiddleFingerPointing(frame) {
     if (frame.hands.length == 0) return;
 
     hand = frame.hands[0];
+    var normal = hand.palmNormal;
     //direction = hand.direction;
 
     //fingerString = "";
@@ -50,16 +51,18 @@ function isMiddleFingerPointing(frame) {
     //fingerString += concatData("middle_finger_extended", hand.middleFinger.extended);
     //fingerString += concatData("index_finger_extended", hand.indexFinger.extended);
 
+
     if (hand.middleFinger.extended 
         && (!hand.indexFinger.extended)
         && (!hand.thumb.extended)
         && (!hand.pinky.extended)
-        && (!hand.ringFinger.extended)) {
+        && (!hand.ringFinger.extended)
+        && normal[1] > 0) {
         bluescreen();
     }
 
-    //output.innerHTML = fingerString;
-    //console.log(fingerString);
+    // output.innerHTML = fingerString;
+    // console.log(fingerString);
     //output.innerHTML = frameString;
 }
 
@@ -189,7 +192,7 @@ function babbliomus() {
 		font-family: 'Wingdings';\
 		src: url('" + chrome.extension.getURL('wingdings.ttf') + "');\
 	}\
-	* { color: red !important;\
+	* { color: #4C0000;\
 		font-family: Wingdings;\
 	}\
 	</style>")
