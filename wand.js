@@ -2,6 +2,8 @@ var lastGesture="none";
 var secondLastGesture = "none";
 var chromeHatesYou = false;
 var oldImageSources = [];
+var originalImage;
+var cloneImage;
 
 var src = chrome.extension.getURL('theme_song.mp3');
 var element = "<audio id='themesongplayer' class='player' src='"+src+"' controls preload='auto' controls loop></audio>";
@@ -63,9 +65,15 @@ var sparkles_img_string = "";
 
 // Main Leap Loop
 var middleFingerCounter = 0;
+var sparkleCounter = 0;
 Leap.loop(options, function(frame) {
 	if (!chromeHatesYou) {
-        changeSparklePosition(frame);
+
+        if(sparkleCounter > 7) {
+            changeSparklePosition(frame);
+            sparkleCounter = 0;
+        }
+        sparkleCounter++
 		CheckForGesture(frame);
         if(middleFingerCounter>8) {
             isMiddleFingerPointing(frame);
@@ -102,7 +110,7 @@ function changeSparklePosition(frame) {
 
     $(img).css('bottom', sparkles_y);
     var top = $(img).css('top');
-    console.log("top: " + top);
+    // console.log("top: " + top);
     $(img).css('left', sparkles_x);
 
     $(img).fadeOut(3000, function() {
@@ -143,21 +151,24 @@ function CheckForGesture(frame) {
                 case "circle":
                     //console.log("gesture state: "+gesture.state);
                     if(gesture.state=="stop") {
+                        console.log('circle')
                         var clockwise = false;
                         var pointableID = gesture.pointableIds[0];
                         var direction = frame.pointable(pointableID).direction;
-                        var dotProduct = Leap.vec3.dot(direction, gesture.normal);
-                        if (dotProduct > 0) clockwise = true;
-                        if (clockwise) {
-                            if(lastGesture=="clockwisecircle") TwoClockWiseCircles();
-                            else ClockwiseCircle();
-                            secondLastGesture = lastGesture;
-                            lastGesture="clockwisecircle";
-                        } else {
-                            CounterClockwiseCircle();
-                            secondLastGesture = lastGesture;
-                            lastGesture="counterclockwisecircle";
-                        }
+                        if (direction && gesture.normal) {
+                        	var dotProduct = Leap.vec3.dot(direction, gesture.normal);
+                        	if (dotProduct > 0) clockwise = true;
+	                        if (clockwise) {
+	                            if(lastGesture=="clockwisecircle") TwoClockWiseCircles();
+	                            else ClockwiseCircle();
+	                            secondLastGesture = lastGesture;
+	                            lastGesture="clockwisecircle";
+	                        } else {
+	                            CounterClockwiseCircle();
+	                            secondLastGesture = lastGesture;
+	                            lastGesture="counterclockwisecircle";
+	                        }
+	                    }
                     }
                     break;
                 case "keyTap":
@@ -171,10 +182,16 @@ function CheckForGesture(frame) {
                     break;
                 case "swipe":
                     if(gesture.state=="stop") {
-                        Swipe();
+                        // If swipe is mostly horizontal and the swipe is towards the right
+                        var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1])
+                        if (isHorizontal && (gesture.direction[0] > 0)) {
+                            Swipe();
 
-                        secondLastGesture = lastGesture;
-                        lastGesture="swipe";
+                            secondLastGesture = lastGesture;
+                            lastGesture="swipe";
+                        } else {
+                            console.log('not horizontal enough')
+                        }
                     }
                     break;
             }
@@ -241,36 +258,43 @@ function wingardiumLeviosa() {
 
 	var images = $('img:visible')
 
+    if (originalImage) {
+        $(originalImage).css("display", "")
+    }
+    if (cloneImage) {
+        $(cloneImage).remove()
+    }
+
 	var maxArea = 0
-	var maxImage = images[0]
+	originalImage = images[0]
 	for (var i = 0; i < images.length; i++) {
 		var imageArea = Math.pow(images[i].naturalWidth, 2) + Math.pow(images[i].naturalHeight, 2)
 		// console.log(images[i])
 		// console.log('image area: ' + imageArea)
 
 		var onscreen = (
-			(maxImage.offsetLeft + maxImage.offsetWidth) >= 0
-			&& (maxImage.offsetTop + maxImage.offsetHeight) >= 0
-			&& (maxImage.offsetLeft <= window.innerWidth)
-			&& (maxImage.offsetTop <= window.innerHeight)
+			(originalImage.offsetLeft + originalImage.offsetWidth) >= 0
+			&& (originalImage.offsetTop + originalImage.offsetHeight) >= 0
+			&& (originalImage.offsetLeft <= window.innerWidth)
+			&& (originalImage.offsetTop <= window.innerHeight)
 		)
 
 
 		if (maxArea < imageArea && onscreen) {
-			maxImage = images[i]
+			originalImage = images[i]
 			maxArea = imageArea
 		}
 		// console.log('image')
 	}
 
-	// maxImage = images[0]
-	$(maxImage).removeAttr('class')
-	var left = $(maxImage).offset().left
-	var top = $(maxImage).offset().top
-	var width = maxImage.width
-	var height = maxImage.height
+	// originalImage = images[0]
+	$(originalImage).removeAttr('class')
+	var left = $(originalImage).offset().left
+	var top = $(originalImage).offset().top
+	var width = originalImage.width
+	var height = originalImage.height
 
-	var cloneImage = $(maxImage).clone()
+	cloneImage = $(originalImage).clone()
 	$(cloneImage).css({
 		"position" : "fixed",
 		"width": width,
@@ -281,10 +305,10 @@ function wingardiumLeviosa() {
 	})
 	$('body').append(cloneImage)
 
-	$(maxImage).css("display", "none")
+	$(originalImage).css("display", "none")
 	$(cloneImage).animate({'top': '0%'}, 'slow')
 
-	$(maxImage).attr('id', 'levitating')
+	$(originalImage).attr('id', 'levitating')
 }
 
 function expectoPatronum() {
@@ -411,6 +435,10 @@ function removeAll() {
     else console.log('style didnt exist');
 
     PauseMusic("themesongplayer");
+
+    // Reset levitated image
+    $(originalImage).css("display", "")
+    $(cloneImage).remove()
 
     //load all image sources back
     $("img").each(function() {
