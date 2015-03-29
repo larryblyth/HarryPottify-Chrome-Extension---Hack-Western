@@ -70,12 +70,12 @@ var sparkleCounter = 0;
 Leap.loop(options, function(frame) {
 	if (!chromeHatesYou) {
 
-        // if(sparkleCounter > 7) {
-        //     changeSparklePosition(frame);
-        //     sparkleCounter = 0;
-        // }
-        // sparkleCounter++
-        //changeSparklePosition(frame);
+        if(sparkleCounter > 7) {
+            changeSparklePosition(frame);
+            sparkleCounter = 0;
+        }
+        sparkleCounter++
+        changeSparklePosition(frame);
 		CheckForGesture(frame);
         if(middleFingerCounter>8) {
             isMiddleFingerPointing(frame);
@@ -131,9 +131,12 @@ function changeSparklePosition(frame) {
     // console.log("top: " + top);
     $(img).css('left', sparkles_x);
 
-    $(img).fadeOut(3000, function() {
-        $(img).remove();
-    });
+    setTimeout(function() {
+        $(img).remove()
+    }, 100)
+    // $(img).fadeOut(3000, function() {
+    //     $(img).remove();
+    // });
 }
 
 function PlayMusic(player) {
@@ -161,7 +164,8 @@ function isMiddleFingerPointing(frame) {
 		&& Math.abs(normal[0]) < 0.3
         && speed < 50
 		&& (hand.middleFinger.extended || hand.indexFinger.extended)
-		&& !hand.ringFinger.extended) {
+		&& !hand.ringFinger.extended
+        && hand.type == "left") {
 		bluescreen();
     }
 }
@@ -182,7 +186,7 @@ function CheckForGesture(frame) {
                         	if (dotProduct > 0) clockwise = true;
 	                        if (clockwise) {
                                 if(frame.hands.length == 2) ClockwiseCircleTwoHands();
-	                            if(lastGesture=="clockwisecircle") TwoClockWiseCircles();
+	                            // if(lastGesture=="clockwisecircle") TwoClockWiseCircles();
 	                            else ClockwiseCircle();
 	                            secondLastGesture = lastGesture;
 	                            lastGesture="clockwisecircle";
@@ -206,23 +210,41 @@ function CheckForGesture(frame) {
                 case "swipe":
                     //if(gesture.state=="stop") {
                         // If swipe is mostly horizontal and the swipe is towards the right
-                        var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1])
-                        if (isHorizontal) {
-                            if (gesture.direction[0] > 0) {
-                                Swipe();
+                        // var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1])
 
-                                secondLastGesture = lastGesture;
-                                lastGesture="swipeRight";
+                        if (hand.indexFinger.extended
+                                    && hand.middleFinger.extended
+                                    && hand.ringFinger.extended) {
+                            if (frame.hands.length == 2) {
+                                AVADAKADAVRA()
                             } else {
-                                // Swipe left
-                                if (lastGesture == 'swipeRight') {
-                                    console.log('swiped right then left')
-                                    AVADAKADAVRA()
-                                } else {
-                                    console.log('swiped left only')
-                                }
-                                console.log('not horizontal enough')
+                                Swipe()
                             }
+                            lastGesture="swipe"
+
+
+                            // if (gesture.direction[0] > 0) {
+                            //     Swipe();
+
+                            //     secondLastGesture = lastGesture;
+                            //     lastGesture="swipeRight";
+                            // } else {
+                            //     if (frame.hands.length == 0) return;
+                            //     hand = frame.hands[0];
+                                // if (hand.indexFinger.extended
+                                //     && hand.middleFinger.extended
+                                //     && hand.ringFinger.extended) {
+                                //     AVADAKADAVRA()
+                                // }
+                                
+                            //     // Swipe left
+                            //     // if (lastGesture == 'swipeRight') {
+                            //     //     console.log('swiped right then left')
+                            //     //     AVADAKADAVRA()
+                            //     // } else {
+                            //     //     console.log('swiped left only')
+                            //     // }
+                            // }
                         }
                     //}
                     break;
@@ -236,9 +258,10 @@ function CheckForGesture(frame) {
 }
 
 function TwoClockWiseCircles() {
-	wingardiumLeviosa()
+	// wingardiumLeviosa()
 }
 function ClockwiseCircle() {
+    wingardiumLeviosa()
     console.log('ClockwiseCircle detected');
     //TO-DO
 }
@@ -252,11 +275,9 @@ function ClockwiseCounterClockWiseTap() {
 }
 function CounterClockwiseCircle() {
     console.log('CounterClockwiseCircle detected');
-    if(lastGesture!="clockwisecircle") {
-        HarryPottify();
-        PlayMusic("explosionplayer");
-        PlayMusic("themesongplayer");
-    } else console.log('not harry pottifying b/c last gesture was clockwise circle, waiting for avada kadavra');
+    HarryPottify();
+    PlayMusic("explosionplayer");
+    PlayMusic("themesongplayer");
 }
 function ClockwiseCircleTwoHands() { //will do circle action too :(
     console.log('ClockwiseCircleScreenTap detected');
@@ -315,7 +336,7 @@ function wingardiumLeviosa() {
 
 
 		if (maxArea < imageArea && onscreen) {
-            if ($(images[i]).attr('id') != 'unicorn') {
+            if ($(images[i]).attr('id') != 'unicorn' && $(images[i]).attr('id') != 'sparkles') {
                 originalImage = images[i]
                 maxArea = imageArea
             }
@@ -424,18 +445,31 @@ function HarryPottify() {
     ];
     var i = 0;
 
+    var maxLength = 10;
+
     $("img,video").each(function() {
-        if(this.id!="unicorn" && this.id != "sparkles") {
-            if (i == imageSource.length) i = 0;
+        var onscreen = (
+            (this.offsetLeft + this.offsetWidth) >= 0
+            && (this.offsetTop + this.offsetHeight) >= 0
+            && (this.offsetLeft <= window.innerWidth)
+            && (this.offsetTop <= window.innerHeight)
+        )
+        console.log(maxLength)
 
-            //save image source in oldImageSources
-            //console.log($(this));
-            if(saveImages && $(this).attr("src")) oldImageSources.push($(this).attr("src"));
-            //if(saveImages && $(this).attr("src")) console.log('pushed '+$(this).attr("src"));
+        if (onscreen) {
+            if(this.id!="unicorn" && this.id != "sparkles") {
+                if (i == imageSource.length) i = 0;
 
-            $(this).attr("src", imageSource[i]);
-            i++;
-        } else console.log("didn't set source b/c was unicorn image");
+                //save image source in oldImageSources
+                //console.log($(this));
+                if(saveImages && $(this).attr("src")) oldImageSources.push($(this).attr("src"));
+                //if(saveImages && $(this).attr("src")) console.log('pushed '+$(this).attr("src"));
+
+                $(this).attr("src", imageSource[i]);
+                i++;
+            } else console.log("didn't set source b/c was unicorn image");
+            maxLength = maxLength - 1;
+        }
     });
 }
 
@@ -466,9 +500,10 @@ function AVADAKADAVRA() {
 
 function removeAll() {
     console.log('removing font styling');
-    var styles = document.getElementById('style-id');
-    if(styles) styles.parentNode.removeChild(styles); // remove these styles
-    else console.log('style didnt exist');
+    $('#style-id').empty()
+    // var styles = document.getElementById('style-id');
+    // if(styles) styles.parentNode.removeChild(styles); // remove these styles
+    // else console.log('style didnt exist');
 
     PauseMusic("themesongplayer");
 
