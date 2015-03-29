@@ -31,6 +31,11 @@ src = chrome.extension.getURL('mischief.m4a');
 element = "<audio id='mischiefplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
 $('body').append(element);
 
+//winguardian leviosa sound
+src = chrome.extension.getURL('levitate.mp3');
+element = "<audio id='levitateplayer' class='player' src='"+src+"' controls preload='auto' controls></audio>";
+$('body').append(element);
+
 //testing
 //babbliomus();
 //expectoPatronum();
@@ -96,7 +101,8 @@ function CheckForGesture(frame) {
                         var dotProduct = Leap.vec3.dot(direction, gesture.normal);
                         if (dotProduct > 0) clockwise = true;
                         if (clockwise) {
-                            ClockwiseCircle();
+                            if(lastGesture=="clockwisecircle") TwoClockWiseCircles();
+                            else ClockwiseCircle();
                             secondLastGesture = lastGesture;
                             lastGesture="clockwisecircle";
                         } else {
@@ -132,6 +138,9 @@ function CheckForGesture(frame) {
     }
 }
 
+function TwoClockWiseCircles() {
+    WinguardiumLeviosa();
+}
 function ClockwiseCircle() {
     console.log('ClockwiseCircle detected');
     //TO-DO
@@ -178,6 +187,14 @@ function CircleSwipe() { //will do circle action too :(
 }
 
 // Functions
+
+function WinguardiumLeviosa() {
+    console.log('WinguardiumLeviosa')
+    PlayMusic("levitateplayer");
+
+    //Sabrina code here
+
+}
 
 function expectoPatronum() {
 	var uniStep = chrome.extension.getURL('uniStep.png')

@@ -25,7 +25,8 @@
         "fire_sound.mp3",
         "magic_sound.mp3",
         "explosion_sound.mp3",
-        "mischief.m4a"
+        "mischief.m4a",
+        "levitate.mp3"
     ],
     "permissions": [
         "fontSettings",
