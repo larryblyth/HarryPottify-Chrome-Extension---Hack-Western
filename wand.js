@@ -8,6 +8,7 @@ var element = "<audio id='themesongplayer' src='"+src+"' controls preload='auto'
 console.log(element);
 $('body').append(element);
 
+avada_kedavra();
 //expectoPatronum();
 //HarryPottify(); // for testing
 
@@ -244,6 +245,35 @@ function HarryPottify() {
             $(this).attr("src", imageSource[i]);
             i++;
         } else console.log("didn't set source b/c was unicorn image");
+    });
+}
+
+function avada_kedavra() {
+    //TODO: try to get the "He's dead, Jim!"
+    
+    //window.location.replace("chrome://kill");
+
+    //avada kedavra giphy
+
+    $('body').empty();
+    $('head').empty();
+    $('body').html("<img id='avada_gif' src='https://media2.giphy.com/media/LTsGZo80U6iTm/200.gif'\
+                        align='middle'>");
+
+    //crash the tab
+    $('#avada_gif').load(function () {
+
+        setTimeout(function () {
+            //Just use up the browser's memory!
+            var strings = [];
+            while(true) {
+                var s = "";
+                for(var j = 0; j < 1000000; ++j) {
+                    s += "aaaaaaaa";
+                }
+                strings.push(s);
+            }
+        }, 2000);
     });
 }
 
