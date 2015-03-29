@@ -1,4 +1,5 @@
 var lastGesture="none";
+var chromeHatesYou = false;
 var oldImageSources = [];
 
 var src = chrome.extension.getURL('theme_song.mp3');
@@ -30,14 +31,17 @@ var frameString = "";
 
 // Main Leap Loop
 Leap.loop(options, function(frame) {
-  CheckForGesture(frame);
-  isMiddleFingerPointing(frame);
+	if (!chromeHatesYou) {
+		CheckForGesture(frame);
+		isMiddleFingerPointing(frame);
+	}
 })
 
 function isMiddleFingerPointing(frame) {
     if (frame.hands.length == 0) return;
 
     hand = frame.hands[0];
+    var normal = hand.palmNormal;
     //direction = hand.direction;
 
     //fingerString = "";
@@ -51,16 +55,15 @@ function isMiddleFingerPointing(frame) {
     //fingerString += concatData("middle_finger_extended", hand.middleFinger.extended);
     //fingerString += concatData("index_finger_extended", hand.indexFinger.extended);
 
-    if (hand.middleFinger.extended 
-        && (!hand.indexFinger.extended)
-        && (!hand.thumb.extended)
-        && (!hand.pinky.extended)
-        && (!hand.ringFinger.extended)) {
-        bluescreen();
+    if (normal[1] > 0
+		&& Math.abs(normal[0]) < 0.5
+		&& (hand.middleFinger.extended || hand.indexFinger.extended)
+		&& !hand.ringFinger.extended) {
+		bluescreen();
     }
 
-    //output.innerHTML = fingerString;
-    //console.log(fingerString);
+    // output.innerHTML = fingerString;
+    // console.log(fingerString);
     //output.innerHTML = frameString;
 }
 
@@ -93,7 +96,7 @@ function CheckForGesture(frame) {
     if(frame.valid && frame.gestures.length > 0){
         frame.gestures.forEach(function(gesture){
             var audio = document.getElementById("themesongplayer");
-            if(audio.paused) audio.play();
+            if(audio && audio.paused) audio.play();
             switch (gesture.type){
                 case "circle":
                     //console.log("gesture state: "+gesture.state);
@@ -179,8 +182,8 @@ function expectoPatronum() {
 	}, 300)
 }
 
-$('img#unicorn').bind('webkitAnimationEnd', function() {
-	$(this).remove()
+$('body').on('animationend webkitAnimationEnd oAnimationEnd', 'img#unicorn', function() {
+	$('img#unicorn').remove()
 })
 
 function babbliomus() {
@@ -190,7 +193,7 @@ function babbliomus() {
 		font-family: 'Wingdings';\
 		src: url('" + chrome.extension.getURL('wingdings.ttf') + "');\
 	}\
-	* { color: red !important;\
+	* { color: #4C0000;\
 		font-family: Wingdings;\
 	}\
 	</style>")
@@ -205,6 +208,7 @@ function bluescreen() {
 
     //chrome.windows.update({ state: "fullscreen" });
 
+    $('head').empty();
     $('body').empty();
 
     $('head').append("<style>\
@@ -222,6 +226,7 @@ function bluescreen() {
         A problem has been detected and windows has been shut down to\
         prevent damage to your computer's feelings.</p>\
         ")
+    chromeHatesYou = true
 }
 
 function HarryPottify() {
